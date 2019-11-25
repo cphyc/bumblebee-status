@@ -38,6 +38,7 @@ DEFAULT_DEST = "USD,EUR,auto"
 DEFAULT_SRC = "GBP"
 
 API_URL = "https://markets.ft.com/data/currencies/ajax/conversion?baseCurrency={}&comparison={}"
+CLICK_URL = "https://markets.ft.com/data/currencies/tearsheet/summary?s={from_curr}{to_curr}"
 LOCATION_URL = "https://ipvigilante.com/"
 
 
@@ -84,6 +85,18 @@ class Module(bumblebee.engine.Module):
                 new = d
             if new != self._base:
                 self._symbols.append(new)
+
+        engine.input.register_callback(
+            self, bumblebee.input.LEFT_MOUSE,
+            self.open_url)
+
+    def open_url(self, event):
+        with open('/tmp/log', 'a') as f:
+            f.write('%s\n' % event)
+        bumblebee.util.execute(
+            "xdg-open %s" % CLICK_URL.format(
+                from_curr=self._base, to_curr=self._symbols[0])
+        )
 
     def price(self, widget):
         if len(self._data) == 0:
