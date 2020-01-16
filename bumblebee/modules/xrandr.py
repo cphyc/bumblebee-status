@@ -111,8 +111,13 @@ class Module(bumblebee.engine.Module):
             if neighbor is None:
                 bumblebee.util.execute("{} --output {} --auto".format(toggle_cmd, widget.name))
             else:
-                bumblebee.util.execute("{} --output {} --auto --{}-of {}".format(toggle_cmd, widget.name,
-                    "left" if event.get("button") == bumblebee.input.LEFT_MOUSE else "right",
-                    neighbor.name))
+                if bumblebee.input.LEFT_MOUSE:
+                    pos = 'above'
+                else:
+                    pos = 'left-of'
+                bumblebee.util.execute("{cmd} --output {output} --auto --{pos} {neighbor}".format(
+                    cmd=toggle_cmd, output=widget.name,
+                    pos=pos,
+                    neighbor=neighbor.name))
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
